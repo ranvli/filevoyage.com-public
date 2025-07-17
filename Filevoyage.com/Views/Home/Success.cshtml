@@ -1,0 +1,28 @@
+﻿@model Filevoyage.com.Models.UploadSuccessModel
+
+@{
+    ViewData["Title"] = "Upload Success";
+}
+
+<div class="text-center mt-5">
+    <h1 class="text-light">FileVoyage</h1>
+    <h3 class="text-light">File uploaded successfully</h3>
+
+    <div class="mt-4">
+        <label class="text-light font-weight-bold">Generated Link</label>
+        <div class="bg-dark text-light p-2 rounded" id="generatedLink">
+            https://filevoy.ag/@Model.ShortCode
+        </div>
+
+        <button class="btn btn-primary mt-3" onclick="copyLink()">Copy Link</button>
+    </div>
+</div>
+
+<script>
+    function copyLink() {
+        const text = document.getElementById("generatedLink").innerText;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("Link copied to clipboard"))
+            .catch(err => alert("Failed to copy"));
+    }
+</script>
