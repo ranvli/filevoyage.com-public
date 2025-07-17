@@ -1,8 +1,42 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Filevoyage.com.Models.UploadModel
+
+@{
+    ViewData["Title"] = "FileVoyage - Upload";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>FileVoyage</h1>
+<h4>Transfer files securely</h4>
+
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+    <div>
+        <label asp-for="File"></label>
+        <input asp-for="File" type="file" required />
+        <span asp-validation-for="File"></span>
+    </div>
+
+    <div>
+        <label asp-for="ExpirationDate">Expiration Date</label>
+        <input asp-for="ExpirationDate" type="date" />
+    </div>
+
+    <div>
+        <input asp-for="ProtectWithQR" type="checkbox" />
+        <label asp-for="ProtectWithQR">Delay download until QR scan</label>
+    </div>
+
+    <button type="submit">Start Upload</button>
+</form>
+
+@if (Model?.DownloadUrl != null)
+{
+    <hr />
+    <h3>File uploaded successfully!</h3>
+    <p>
+        <strong>Download Link:</strong>
+        <a href="@Model.DownloadUrl" target="_blank">@Model.DownloadUrl</a>
+    </p>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
