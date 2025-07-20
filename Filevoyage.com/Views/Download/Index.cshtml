@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Download";
+
+    // Obtenemos el código corto que nos pasó el controller
+    string shortCode = ViewBag.ShortCode as string ?? "";
+
+    // Generamos la URL al método StreamDownload de DownloadController
+    string downloadUrl = Url.Action(
+        "StreamDownload",    // nombre del método en el controller
+        "Download",          // nombre del controller
+        new { shortCode = shortCode }
+    ) ?? $"/download/{shortCode}"; // fallback
+}
+
+<style>
+    body {
+        background: url('/images/bg.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        text-align: center;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .cloud-icon {
+        width: 150px;
+        margin: 40px auto 20px;
+    }
+
+    .download-button {
+        background-color: white;
+        color: #0b3a58;
+        font-weight: bold;
+        padding: 10px 40px;
+        border: none;
+        border-radius: 50px;
+        font-size: 20px;
+        box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .download-button:hover {
+        background-color: #f0f0f0;
+    }
+
+    .fade-in {
+        animation: fadeIn 1.5s ease-in;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<div class="fade-in mt-5">
+    <h1>FileVoyage</h1>
+    <h4>This file was shared with you</h4>
+
+    <img src="/images/cloud-icon.png" alt="Download" class="cloud-icon" />
+
+    <p>The download will start automatically. If not, click below.</p>
+
+    <a class="download-button" href="@downloadUrl">Download</a>
+</div>
+
+<script>
+    // Autodownload after 2.5 seconds
+    setTimeout(() => {
+        window.location.href = "@downloadUrl";
+    }, 2500);
+</script>

@@ -1,60 +1,64 @@
+﻿using Azure.Storage;
+using Azure.Storage.Blobs;
 using Filevoyage.com.Services;
 using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC + Attribute routing
 builder.Services.AddControllersWithViews();
 
+// CosmosClient
+builder.Services.AddSingleton(sp => {
+    var cfg = builder.Configuration.GetSection("CosmosDb");
+    return new CosmosClient(cfg["Account"]!, cfg["Key"]!);
+});
+
+// CosmosDbService (client, databaseName, containerName)
+builder.Services.AddSingleton(sp => {
+    var cfg = builder.Configuration.GetSection("CosmosDb");
+    var client = sp.GetRequiredService<CosmosClient>();
+    return new CosmosDbService(
+        client,
+        cfg["DatabaseName"]!,
+        cfg["ContainerName"]!
+    );
+});
+
+// Blob Storage
 builder.Services.AddSingleton<AzureStorageService>();
-builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
-{
-    var config = builder.Configuration.GetSection("CosmosDb");
-    return new CosmosClient(config["Account"], config["Key"]);
-});
-
-builder.Services.AddSingleton<CosmosDbService>(serviceProvider =>
-{
-    var config = builder.Configuration.GetSection("CosmosDb");
-    var client = serviceProvider.GetRequiredService<CosmosClient>();
-    return new CosmosDbService(client, config["DatabaseName"], config["ContainerName"]);
-});
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseRouting();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "shortlink",
-        pattern: "{shortCode}",
-        defaults: new { controller = "Home", action = "RedirectToBlob" });
-
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-});
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
+// Activamos Attribute Routing
+app.MapControllers();
+
+// Ruta corta: `https://miapp/{shortCode}` → HomeController.RedirectToBlob
+// en Program.cs, justo antes de tu ruta "default"
+app.MapControllerRoute(
+  name: "shortlink",
+  pattern: "{shortCode}",
+  defaults: new { controller = "Download", action = "DownloadPage" }
+);
+
+
+// MVC convencional
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();

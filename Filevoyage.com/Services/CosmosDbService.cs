@@ -1,6 +1,6 @@
-﻿using Filevoyage.com.Models;
+﻿// File: Services/CosmosDbService.cs
+using Filevoyage.com.Models;
 using Microsoft.Azure.Cosmos;
-using System.Threading.Tasks;
 
 namespace Filevoyage.com.Services
 {
@@ -8,9 +8,10 @@ namespace Filevoyage.com.Services
     {
         private readonly Container _container;
 
-        public CosmosDbService(CosmosClient dbClient, string databaseName, string containerName)
+        // <-- constructor ajustado
+        public CosmosDbService(CosmosClient client, string databaseName, string containerName)
         {
-            _container = dbClient.GetContainer(databaseName, containerName);
+            _container = client.GetContainer(databaseName, containerName);
         }
 
         public async Task AddItemAsync(FileMetadata item)
@@ -18,11 +19,18 @@ namespace Filevoyage.com.Services
             await _container.CreateItemAsync(item, new PartitionKey(item.PartitionKey));
         }
 
-        public async Task<FileMetadata> GetItemByIdAsync(string id)
+        public async Task<FileMetadata?> GetItemByIdAsync(string id)
         {
-            var partKey = id.Substring(0, 2);
-            var response = await _container.ReadItemAsync<FileMetadata>(id, new PartitionKey(partKey));
-            return response.Resource;
+            var pk = id.Substring(0, 2);
+            try
+            {
+                var resp = await _container.ReadItemAsync<FileMetadata>(id, new PartitionKey(pk));
+                return resp.Resource;
+            }
+            catch (CosmosException e) when (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
     }
 }
