@@ -1,62 +1,116 @@
-﻿@model Filevoyage.com.Models.UploadModel
+﻿@using Filevoyage.com.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model UploadModel
 
 @{
-    ViewData["Title"] = "FileVoyage - Upload";
+    ViewData["Title"] = "FileVoyage";
+    Layout = null;
+    // Si quieres precargar la fecha con hoy +3 días:
+    // Model.ExpirationDate ??= DateTime.UtcNow.AddDays(3);
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
+    <!-- Tu CSS -->
+    <link href="~/css/fv-hero.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+    <!-- Overlay de espera -->
+    <div id="loadingOverlay" class="loading-overlay"></div>
 
-<h1>FileVoyage</h1>
-<h4>Transfer files securely</h4>
+    <div class="fv-hero">
+        <div class="fv-overlay"></div>
+        <div class="fv-content">
 
-<form asp-action="Index" method="post" enctype="multipart/form-data">
-    <div>
-        <label asp-for="File"></label>
-        <input asp-for="File" type="file" required />
-        <span asp-validation-for="File" class="text-danger"></span>
+            <!-- Lock SVG -->
+            <div class="fv-lock">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="56" y="112" width="144" height="104" rx="16" ry="16" fill="currentColor" />
+                    <path d="M80 112V80a48 48 0 0 1 96 0v32"
+                          stroke="currentColor" stroke-width="24" fill="none" />
+                </svg>
+            </div>
+
+            <!-- Card -->
+            <div class="fv-card">
+                <h1>FileVoyage</h1>
+                <p class="fv-sub">Transfer files securely</p>
+
+                <form id="uploadForm" asp-action="Index" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="fv-error"></div>
+
+                    <!-- File input -->
+                    <div class="fv-field">
+                        <label for="FileInput" class="fv-file-label">
+                            <input asp-for="File"
+                                   id="FileInput"
+                                   type="file"
+                                   class="fv-file-input"
+                                   required />
+                            <span>Choose file</span>
+                        </label>
+                        <span class="fv-filename">No file chosen</span>
+                        <span asp-validation-for="File" class="fv-error"></span>
+                    </div>
+
+                    <!-- Expiration date -->
+                    <div class="fv-field">
+                        <label asp-for="ExpirationDate"></label>
+                        <input asp-for="ExpirationDate"
+                               type="date"
+                               class="fv-date"
+                               value="@(Model.ExpirationDate.HasValue
+                             ? Model.ExpirationDate.Value.ToString("yyyy-MM-dd")
+                             : "")" />
+                        <span asp-validation-for="ExpirationDate" class="fv-error"></span>
+                    </div>
+
+                    <!-- Submit -->
+                    <button id="submitBtn" type="submit" class="fv-btn">
+                        Start Upload
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <div>
-        <label asp-for="ExpirationDate"></label>
-        <input asp-for="ExpirationDate" type="date" />
-        <span asp-validation-for="ExpirationDate" class="text-danger"></span>
-    </div>
+    <footer class="fv-footer">
+        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacy</a></p>
+    </footer>
 
-    <div>
-        <label asp-for="MaxDownloads"></label>
-        <!-- opción 1: number input -->
-        <input asp-for="MaxDownloads"
-               type="number"
-               min="1" max="5"
-               step="1" />
-        <span asp-validation-for="MaxDownloads" class="text-danger"></span>
+    <!-- jQuery + Validation -->
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
 
-        <!--
-        opción 2: select dropdown en lugar de número
-        <select asp-for="MaxDownloads">
-            @for(int i = 1; i <= 5; i++) {
-                <option value="@i">@i descargas</option>
-            }
-        </select>
-        -->
-    </div>
+    <script>
+        $(function () {
+            var $form = $('#uploadForm'),
+                $fileInput = $('#FileInput'),
+                $fileName = $('.fv-filename'),
+                $btn = $('#submitBtn'),
+                $date = $('.fv-date'),
+                $overlay = $('#loadingOverlay');
 
-    <div>
-        <input asp-for="ProtectWithQR" type="checkbox" />
-        <label asp-for="ProtectWithQR">Delay download until QR scan</label>
-    </div>
+            // Mostrar nombre de archivo
+            $fileInput.on('change', function () {
+                var f = this.files[0];
+                $fileName.text(f ? f.name : 'No file chosen');
+            });
 
-    <button type="submit">Start Upload</button>
-</form>
-
-@if (Model?.DownloadUrl != null)
-{
-    <hr />
-    <h3>File uploaded successfully!</h3>
-    <p>
-        <strong>Download Link:</strong>
-        <a href="@Model.DownloadUrl" target="_blank">@Model.DownloadUrl</a>
-    </p>
-}
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+            // Cuando el form pase validación y vaya a submit
+            $form.on('submit', function () {
+                $overlay.show();                 // Mostrar overlay
+                $btn.prop('disabled', true)      // Deshabilitar botón
+                    .text('⌛ Uploading…');       // Cambiar texto
+                $date.prop('disabled', true);    // Deshabilitar datepicker
+            });
+        });
+    </script>
+</body>
+</html>

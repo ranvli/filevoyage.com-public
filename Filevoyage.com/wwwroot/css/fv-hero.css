@@ -1,0 +1,314 @@
+﻿/* ========================================
+   Hero completo (fondo + overlay + content)
+   ======================================== */
+.fv-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    color: #111827;
+    overflow: hidden;
+}
+
+/* overlay de color + posible imagen de fondo */
+.fv-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #081A3E; /* azul muy oscuro */
+      background-image: url('/images/hero-bg.jpg');
+      background-size: cover;
+      background-position: center;
+    z-index: 1;
+}
+
+/* Overlay que cubre toda la pantalla */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* semitransparente */
+    display: none;
+    z-index: 9999; /* por encima de todo */
+    cursor: wait; /* puntero tipo reloj de arena */
+}
+
+    .loading-overlay::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 3rem;
+        height: 3rem;
+        margin: -1.5rem 0 0 -1.5rem;
+        border: 4px solid #fff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* contenedor flex centrado */
+.fv-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* ========================================
+   Ícono de candado a la izquierda
+   ======================================== */
+.fv-lock {
+    flex: 1;
+    max-width: 300px;
+    color: #8BCFE0; /* azul claro */
+    display: none; /* ocultar en móviles */
+}
+
+@media(min-width: 768px) {
+    .fv-lock {
+        display: block;
+    }
+
+        .fv-lock svg {
+            width: 100%;
+            height: auto;
+        }
+}
+
+/* ========================================
+   Tarjeta del formulario
+   ======================================== */
+.fv-card {
+    flex: 0 0 320px;
+    background-color: #E9ECEF;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+    .fv-card h1 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.75rem;
+        color: #004AAD;
+        text-align: center;
+    }
+
+    .fv-card .fv-sub {
+        margin: 4px 0 24px;
+        font-weight: 300;
+        font-size: 0.9rem;
+        color: #374151;
+        text-align: center;
+    }
+
+/* ========================================
+   Campos de formulario
+   ======================================== */
+.fv-field {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Input file personalizado */
+.fv-file-label {
+    display: inline-block;
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.fv-file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.fv-filename {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #6B7280;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Input date */
+.fv-date {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    color: #111827;
+}
+
+/* Checkbox (si quieres ocultarlo, añade display:none) */
+.fv-check {
+    display: flex;
+    align-items: center;
+}
+
+    .fv-check input[type="checkbox"] {
+        margin-right: 8px;
+        transform: scale(1.1);
+    }
+
+/* Mensajes de validación */
+.fv-error {
+    color: #DC2626;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ========================================
+   Botón principal
+   ======================================== */
+.fv-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 4px;
+    background-color: #004AAD;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .fv-btn:hover {
+        background-color: #002F6C;
+    }
+
+/* ========================================
+   Footer minimalista
+   ======================================== */
+.fv-footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 0.85rem;
+    color: #FFFFFF;
+    background-color: transparent;
+}
+
+    .fv-footer a {
+        color: #8BCFE0;
+        text-decoration: none;
+        margin: 0 4px;
+    }
+
+    .fv-footer a:hover {
+        text-decoration: underline;
+    }
+
+
+/* -------------------------------
+   Success card tweaks
+---------------------------------*/
+.fv-success-emoji {
+    font-size: 2.5rem;
+    margin: 0;
+    color: #0073e6;
+}
+
+.fv-card p {
+    margin: 0.75rem 0;
+    color: #333;
+    font-weight: 300;
+}
+
+.fv-link {
+    color: #0073e6;
+    word-break: break-all;
+    text-decoration: underline;
+}
+
+.fv-qr-text {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.fv-qr-container {
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.fv-qr {
+    width: 160px;
+    height: 160px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Contenedores en columna, con espacio entre items */
+.fv-link-container,
+.fv-qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Centrar QR y botón debajo */
+.fv-qr-container {
+    align-items: center;
+}
+
+/* Botones de copia */
+.fv-copy-btn {
+    background: #0073e6;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: background 0.2s ease;
+}
+
+    .fv-copy-btn:hover {
+        background: #005bb5;
+    }
+
+    .fv-copy-btn:active {
+        transform: scale(0.98);
+    }
+
+/* Si quieres que el link sea más legible y no muy largo */
+.fv-link {
+    word-break: break-all;
+    color: #0073e6;
+    text-decoration: underline;
+}

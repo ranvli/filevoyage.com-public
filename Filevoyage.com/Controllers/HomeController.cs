@@ -1,8 +1,9 @@
-﻿// Controllers/HomeController.cs
-using Filevoyage.com.Models;
+﻿using Filevoyage.com.Models;
 using Filevoyage.com.Services;
 using Microsoft.AspNetCore.Mvc;
 using NanoidDotNet;
+using QRCoder;
+using static QRCoder.QRCodeGenerator;
 
 namespace Filevoyage.com.Controllers
 {
@@ -37,36 +38,55 @@ namespace Filevoyage.com.Controllers
                 return View(model);
             }
 
-            // 1) Subir a blob
-            var uniqueName = Guid.NewGuid() + Path.GetExtension(model.File.FileName);
+            // 1) Subir blob
+            var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(model.File.FileName)}";
             await using var stream = model.File.OpenReadStream();
             await _storage.UploadFileAsync(uniqueName, stream);
 
             // 2) Guardar metadatos en Cosmos
             var shortCode = await Nanoid.GenerateAsync(size: 6);
-            var partitionKey = shortCode.Substring(0, 2);
+            var partition = shortCode.Substring(0, 2);
+            var expiration = model.ExpirationDate.GetValueOrDefault(DateTime.UtcNow.AddDays(3));
 
             var meta = new FileMetadata
             {
                 Id = shortCode,
-                PartitionKey = partitionKey,
+                PartitionKey = partition,
                 Filename = model.File.FileName,
-                DownloadUrl = uniqueName,     // guardamos solo el nombre del blob
+                DownloadUrl = uniqueName,
                 Size = model.File.Length,
                 ContentType = model.File.ContentType!,
                 UploadDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
-
-                // ✚ nuevos:
-                ExpirationDate = model.ExpirationDate ?? DateTime.UtcNow.AddDays(3),
+                ExpirationDate = expiration,
                 MaxDownloads = model.MaxDownloads,
                 DownloadCount = 0,
                 ProtectWithQR = model.ProtectWithQR
             };
-
             await _cosmos.AddItemAsync(meta);
 
-            // 3) Mostrar pantalla de éxito con el shortCode
-            return View("Success", new UploadSuccessModel { ShortCode = shortCode });
+            // 3) URL de descarga
+            var downloadUrl = Url.Action(
+                "DownloadPage",
+                "Download",
+                new { shortCode },
+                protocol: Request.Scheme);
+
+            // 4) Generar QR
+            using var qrGen = new QRCodeGenerator();
+            using var qrData = qrGen.CreateQrCode(downloadUrl, ECCLevel.Q);
+            using var qrPng = new PngByteQRCode(qrData);
+            var qrBytes = qrPng.GetGraphic(20);
+            var qrDataUrl = $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
+
+            // 5) ViewModel success
+            var vm = new UploadSuccessModel
+            {
+                ShortCode = shortCode,
+                DownloadUrl = downloadUrl,
+                QrImageDataUrl = qrDataUrl
+            };
+
+            return View("Success", vm);
         }
     }
 }

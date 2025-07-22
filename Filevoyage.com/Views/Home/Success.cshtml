@@ -1,28 +1,101 @@
 ﻿@model Filevoyage.com.Models.UploadSuccessModel
-
 @{
     ViewData["Title"] = "Upload Success";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] – FileVoyage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<div class="text-center mt-5">
-    <h1 class="text-light">FileVoyage</h1>
-    <h3 class="text-light">File uploaded successfully</h3>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/fv-hero.css" />
 
-    <div class="mt-4">
-        <label class="text-light font-weight-bold">Generated Link</label>
-        <div class="bg-dark text-light p-2 rounded" id="generatedLink">
-            https://filevoy.ag/@Model.ShortCode
+    <style>
+        /* Botones de copia */
+        .fv-link-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fv-copy-btn {
+            background: #0073e6;
+            border: none;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+            .fv-copy-btn:active {
+                transform: scale(0.98);
+            }
+    </style>
+</head>
+<body>
+    <div class="fv-hero">
+        <div class="fv-overlay"></div>
+        <div class="fv-content">
+
+            <div class="fv-card">
+                <h1 class="fv-success-emoji">🎉 Uploaded!</h1>
+                <p class="fv-sub">Your file is ready</p>
+
+                <!-- Download link + Copy -->
+                <p><strong>Download link:</strong></p>
+                <div class="fv-link-container">
+                    <a id="downloadLink" href="@Model.DownloadUrl" target="_blank" class="fv-link">
+                        @Model.DownloadUrl
+                    </a>
+                    <button id="copyLinkBtn" class="fv-copy-btn">Copy Link</button>
+                </div>
+
+                <p class="fv-qr-text">Share that URL or scan the QR below:</p>
+                <div class="fv-qr-container">
+                    <img id="qrImg" src="@Model.QrImageDataUrl" alt="QR code" class="fv-qr" />
+                    <button id="copyQrBtn" class="fv-copy-btn">Copy QR</button>
+                </div>
+
+            </div>
+
         </div>
-
-        <button class="btn btn-primary mt-3" onclick="copyLink()">Copy Link</button>
     </div>
-</div>
 
-<script>
-    function copyLink() {
-        const text = document.getElementById("generatedLink").innerText;
-        navigator.clipboard.writeText(text)
-            .then(() => alert("Link copied to clipboard"))
-            .catch(err => alert("Failed to copy"));
-    }
-</script>
+    <footer class="fv-footer">
+        <p>© 2025 – Filevoyage.com&nbsp;·&nbsp;<a href="/Privacy">Privacy</a></p>
+    </footer>
+
+    <script>
+    // Copiar enlace
+    document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+        const url = document.getElementById('downloadLink').href;
+        try {
+            await navigator.clipboard.writeText(url);
+            alert('Download link copied to clipboard!');
+        } catch (err) {
+            console.error(err);
+            alert('Failed to copy link');
+        }
+    });
+
+    // Copiar imagen QR
+    document.getElementById('copyQrBtn').addEventListener('click', async () => {
+        const dataUrl = document.getElementById('qrImg').src;
+        try {
+            const blob = await (await fetch(dataUrl)).blob();
+            const item = new ClipboardItem({ 'image/png': blob });
+            await navigator.clipboard.write([item]);
+            alert('QR image copied to clipboard!');
+        } catch (err) {
+            console.error(err);
+            alert('Failed to copy QR image (maybe not supported)');
+        }
+    });
+    </script>
+</body>
+</html>
