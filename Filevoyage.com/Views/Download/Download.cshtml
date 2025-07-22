@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Download";
+    var shortCode = ViewBag.ShortCode as string;
+    var filename = ViewBag.Filename as string;
+    bool protectQR = (bool)ViewBag.ProtectWithQR;
+    var dlUrl = Url.Action("StreamDownload", "Download", new { shortCode });
+}
+
+<h1>FileVoyage</h1>
+<h4>@filename</h4>
+
+@if (protectQR)
+{
+    <p>Escanea este código QR para iniciar la descarga:</p>
+    <img src="@(Url.Action("QrCode", "Download", new { shortCode }))" />
+    <!-- Opcional: generar un endpoint QrCode en DownloadController usando QRCoder -->
+}
+else
+{
+    <p>La descarga empezará en 3 segundos. Si no, haz clic aquí:</p>
+    <a href="@dlUrl">Descargar</a>
+    <p>Remaining downloads: @ViewBag.Remaining</p>
+    <script>
+        setTimeout(() => window.location.href = "@dlUrl", 3000);
+    </script>
+}

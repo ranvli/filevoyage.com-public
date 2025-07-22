@@ -11,12 +11,32 @@
     <div>
         <label asp-for="File"></label>
         <input asp-for="File" type="file" required />
-        <span asp-validation-for="File"></span>
+        <span asp-validation-for="File" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="ExpirationDate">Expiration Date</label>
+        <label asp-for="ExpirationDate"></label>
         <input asp-for="ExpirationDate" type="date" />
+        <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="MaxDownloads"></label>
+        <!-- opción 1: number input -->
+        <input asp-for="MaxDownloads"
+               type="number"
+               min="1" max="5"
+               step="1" />
+        <span asp-validation-for="MaxDownloads" class="text-danger"></span>
+
+        <!--
+        opción 2: select dropdown en lugar de número
+        <select asp-for="MaxDownloads">
+            @for(int i = 1; i <= 5; i++) {
+                <option value="@i">@i descargas</option>
+            }
+        </select>
+        -->
     </div>
 
     <div>
