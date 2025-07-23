@@ -1,6 +1,11 @@
 ﻿// Controllers/DownloadController.cs
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Filevoyage.com.Models;
 using Filevoyage.com.Services;
 using Microsoft.AspNetCore.Mvc;
+using QRCoder;
 
 namespace Filevoyage.com.Controllers
 {
@@ -9,58 +14,104 @@ namespace Filevoyage.com.Controllers
         private readonly AzureStorageService _storage;
         private readonly CosmosDbService _cosmos;
 
-        public DownloadController(AzureStorageService storage,
-                                  CosmosDbService cosmosDb)
+        public DownloadController(
+            AzureStorageService storage,
+            CosmosDbService cosmosDb)
         {
             _storage = storage;
             _cosmos = cosmosDb;
         }
 
-        // 1) Página con botón / QR / mensaje
-        [HttpGet("/{shortCode}")]
+        // 1) Página de “pre‑descarga”: /ABC123
+        [HttpGet("{shortCode}")]
         public async Task<IActionResult> DownloadPage(string shortCode)
         {
+            if (string.IsNullOrWhiteSpace(shortCode))
+                return NotFound();
+
+            // Lee metadata con un solo método
             var meta = await _cosmos.GetItemByIdAsync(shortCode);
-            if (meta == null) return NotFound();
+            if (meta == null)
+                return NotFound();
 
-            // ✚ chequeo de expiración
-            if (DateTime.UtcNow > meta.ExpirationDate)
-                return View("Expired");
+            // Expirado?
+            if (meta.ExpirationDate < DateTime.UtcNow)
+                return View("DownloadExpired");
 
-            // ✚ chequeo de contador
-            if (meta.DownloadCount >= meta.MaxDownloads)
-                return View("Expired");
+            // Descargas restantes (si MaxDownloads>0)
+            int? remaining = meta.MaxDownloads > 0
+                ? meta.MaxDownloads - meta.DownloadCount
+                : (int?)null;
 
-            ViewBag.Filename = meta.Filename;
+            if (remaining.HasValue && remaining.Value <= 0)
+                return View("DownloadExpired");
+
+            // Pasa datos a la vista
             ViewBag.ShortCode = shortCode;
+            ViewBag.Filename = meta.Filename;
             ViewBag.ProtectWithQR = meta.ProtectWithQR;
+            ViewBag.Remaining = remaining;
+
+            // Construye la URL “stream”: https://host/ABC123/stream
+            var host = $"{Request.Scheme}://{Request.Host}";
+            ViewBag.StreamUrl = $"{host}/{shortCode}/stream";
+
             return View("Download");
         }
 
-        [HttpGet("/download/{shortCode}")]
+        // 2) Endpoint para generar el QR: /ABC123/qr
+        [HttpGet("{shortCode}/qr")]
+        public async Task<IActionResult> QrCode(string shortCode)
+        {
+            // (podrías validar meta como arriba, pero asumo que /qr sólo lo ve quien sabe el código)
+            var host = $"{Request.Scheme}://{Request.Host}";
+            var downloadLink = $"{host}/{shortCode}";
+
+            using var qrGen = new QRCodeGenerator();
+            using var qrData = qrGen.CreateQrCode(downloadLink, QRCodeGenerator.ECCLevel.Q);
+            using var qrBmp = new PngByteQRCode(qrData);
+            var pngBytes = qrBmp.GetGraphic(20);
+
+            return File(pngBytes, "image/png");
+        }
+
+        // 3) Descarga real “stream”: /ABC123/stream
+        [HttpGet("{shortCode}/stream")]
         public async Task<IActionResult> StreamDownload(string shortCode)
         {
-            // 1) Trae metadata
-            var meta = await _cosmos.GetItemByIdAsync(shortCode);
-            if (meta == null) return NotFound();
+            if (string.IsNullOrWhiteSpace(shortCode))
+                return NotFound();
 
-            // 2) Comprueba límite
-            if (meta.DownloadsCount >= meta.MaxDownloads)
+            var meta = await _cosmos.GetItemByIdAsync(shortCode);
+            if (meta == null)
+                return NotFound();
+
+            // Límite de descargas
+            if (meta.MaxDownloads > 0 && meta.DownloadCount >= meta.MaxDownloads)
+                return Forbid("Límite de descargas excedido.");
+
+            // Incrementa contador
+            meta.DownloadCount++;
+            await _cosmos.UpdateItemAsync(meta);
+
+            // Opción: devolver remaining en cabecera
+            if (meta.MaxDownloads > 0)
             {
-                // Puedes devolver 403, o una vista “Expired”
-                return Forbid($"This link has reached its max of {meta.MaxDownloads} downloads.");
+                var rem = meta.MaxDownloads - meta.DownloadCount;
+                Response.Headers["X-Remaining-Downloads"] = rem.ToString();
             }
 
-            // 3) Incrementa contador
-            await _cosmos.IncrementDownloadCountAsync(shortCode);
-            ViewBag.Remaining = meta.MaxDownloads - meta.DownloadsCount;
-
-            // 4) Recupera blob y transmite
+            // Recupera el blob
             var blobName = Path.GetFileName(meta.DownloadUrl);
             var result = await _storage.DownloadFileStreamAsync(blobName);
-            if (result == null) return NotFound();
+            if (result == null)
+                return NotFound();
 
-            var (stream, contentType) = result.Value;
+            // AzureStorageService devuelve (Stream Content, string ContentType)
+            var stream = result.Value.Content;
+            var contentType = result.Value.ContentType;
+
+            // Devuelve el archivo al cliente
             return File(stream, contentType, meta.Filename);
         }
     }

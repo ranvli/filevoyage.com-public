@@ -91,26 +91,34 @@
     <script>
         $(function () {
             var $form = $('#uploadForm'),
-                $fileInput = $('#FileInput'),
-                $fileName = $('.fv-filename'),
+                $fileInp = $('#FileInput'),
+                $fileLab = $('.fv-filename'),
                 $btn = $('#submitBtn'),
                 $date = $('.fv-date'),
                 $overlay = $('#loadingOverlay');
 
+            // Inicializa jQuery Validate (ya lo carga unobtrusive)
+            $form.validate();
+
             // Mostrar nombre de archivo
-            $fileInput.on('change', function () {
+            $fileInp.on('change', function () {
                 var f = this.files[0];
-                $fileName.text(f ? f.name : 'No file chosen');
+                $fileLab.text(f ? f.name : 'No file chosen');
             });
 
-            // Cuando el form pase validación y vaya a submit
-            $form.on('submit', function () {
-                $overlay.show();                 // Mostrar overlay
-                $btn.prop('disabled', true)      // Deshabilitar botón
-                    .text('⌛ Uploading…');       // Cambiar texto
-                $date.prop('disabled', true);    // Deshabilitar datepicker
+            // Solo si el form es válido, muestro overlay y bloqueo controles
+            $form.on('submit', function (e) {
+                if (!$(this).valid()) {
+                    // si no pasó validación, dejamos que jQuery muestre errores
+                    return;
+                }
+                // si es válido, entonces bloqueo y muestro overlay
+                $overlay.show();
+                $btn.prop('disabled', true).text('⌛ Uploading…');
+                $date.prop('disabled', true);
             });
         });
     </script>
+
 </body>
 </html>

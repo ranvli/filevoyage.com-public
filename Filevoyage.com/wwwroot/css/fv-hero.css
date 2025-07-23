@@ -26,6 +26,7 @@
 
 /* Overlay que cubre toda la pantalla */
 .loading-overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;

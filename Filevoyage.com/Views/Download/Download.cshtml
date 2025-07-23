@@ -1,26 +1,62 @@
 ﻿@{
-    ViewData["Title"] = "Download";
-    var shortCode = ViewBag.ShortCode as string;
+    Layout = null;
     var filename = ViewBag.Filename as string;
     bool protectQR = (bool)ViewBag.ProtectWithQR;
-    var dlUrl = Url.Action("StreamDownload", "Download", new { shortCode });
+    int? remaining = ViewBag.Remaining as int?;
+    string streamUrl = ViewBag.StreamUrl as string;
+    string code = ViewBag.ShortCode as string;
 }
 
-<h1>FileVoyage</h1>
-<h4>@filename</h4>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>FileVoyage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/css/fv-hero.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="fv-hero">
+        <div class="fv-overlay"></div>
+        <div class="fv-content">
+            <div class="fv-card">
+                <h1>FileVoyage</h1>
+                <p class="fv-sub">@filename</p>
 
-@if (protectQR)
-{
-    <p>Escanea este código QR para iniciar la descarga:</p>
-    <img src="@(Url.Action("QrCode", "Download", new { shortCode }))" />
-    <!-- Opcional: generar un endpoint QrCode en DownloadController usando QRCoder -->
-}
-else
-{
-    <p>La descarga empezará en 3 segundos. Si no, haz clic aquí:</p>
-    <a href="@dlUrl">Descargar</a>
-    <p>Remaining downloads: @ViewBag.Remaining</p>
-    <script>
-        setTimeout(() => window.location.href = "@dlUrl", 3000);
-    </script>
-}
+                @if (protectQR)
+                {
+                    <p>Escanea este QR para descargar:</p>
+                    <img src="@Url.Action("QrCode","Download",new { shortCode=code })"
+                         class="fv-qr" />
+                }
+                else
+                {
+                    <p>La descarga comenzará en <span id="count">3</span> s. Si no, haz clic:</p>
+                    <a href="@streamUrl" class="fv-link">Descargar</a>
+
+                    @if (remaining.HasValue)
+                    {
+                        <p>Quedan <strong>@remaining</strong> descargas</p>
+                    }
+
+                    <script>
+            let s = 3,
+                cnt = document.getElementById('count'),
+                iv = setInterval(() => {
+                  if (--s <= 0) {
+                    clearInterval(iv);
+                    location.href = '@streamUrl';
+                  } else {
+                    cnt.textContent = s;
+                  }
+                }, 1000);
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+    <footer class="fv-footer">
+        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacy</a></p>
+    </footer>
+</body>
+</html>
