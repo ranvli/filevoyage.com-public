@@ -1,10 +1,10 @@
 ﻿@model Filevoyage.com.Models.UploadSuccessModel
 @{
-    ViewData["Title"] = "Upload Success";
+    ViewData["Title"] = "Carga exitosa";
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] – FileVoyage</title>
@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="~/css/fv-hero.css" />
 
     <style>
-        /* Botones de copia */
         .fv-link-container {
             display: flex;
             align-items: center;
@@ -39,63 +38,57 @@
 </head>
 <body>
     <div class="fv-hero">
-        <div class="fv-overlay"></div>
-        <div class="fv-content">
-
+        <div class="fv-overlay" aria-hidden="true" aria-live="off"></div>
+        <main class="fv-content" id="mainContent" role="main">
             <div class="fv-card">
-                <h1 class="fv-success-emoji">🎉 Uploaded!</h1>
-                <p class="fv-sub">Your file is ready</p>
+                <h1 class="fv-success-emoji" aria-label="Carga exitosa">🎉 ¡Archivo cargado!</h1>
+                <p class="fv-sub">Tu archivo está listo</p>
 
-                <!-- Download link + Copy -->
-                <p><strong>Download link:</strong></p>
+                <p><strong>Enlace de descarga:</strong></p>
                 <div class="fv-link-container">
                     <a id="downloadLink" href="@Model.DownloadUrl" target="_blank" class="fv-link">
                         @Model.DownloadUrl
                     </a>
-                    <button id="copyLinkBtn" class="fv-copy-btn">Copy Link</button>
+                    <button id="copyLinkBtn" class="fv-copy-btn" aria-label="Copiar enlace de descarga al portapapeles">Copiar enlace</button>
                 </div>
 
-                <p class="fv-qr-text">Share that URL or scan the QR below:</p>
+                <p class="fv-qr-text">Comparte ese enlace o escanea el siguiente código QR:</p>
                 <div class="fv-qr-container">
-                    <img id="qrImg" src="@Model.QrImageDataUrl" alt="QR code" class="fv-qr" />
-                    <button id="copyQrBtn" class="fv-copy-btn">Copy QR</button>
+                    <img id="qrImg" src="@Model.QrImageDataUrl" alt="Código QR que enlaza al archivo cargado" class="fv-qr" />
+                    <button id="copyQrBtn" class="fv-copy-btn" aria-label="Copiar imagen del código QR">Copiar QR</button>
                 </div>
-
             </div>
-
-        </div>
+        </main>
     </div>
 
-    <footer class="fv-footer">
-        <p>© 2025 – Filevoyage.com&nbsp;·&nbsp;<a href="/Privacy">Privacy</a></p>
+    <footer class="fv-footer" role="contentinfo">
+        <p>© 2025 – Filevoyage.com&nbsp;·&nbsp;<a href="/Privacy">Privacidad</a></p>
     </footer>
 
     <script>
-    // Copiar enlace
-    document.getElementById('copyLinkBtn').addEventListener('click', async () => {
-        const url = document.getElementById('downloadLink').href;
-        try {
-            await navigator.clipboard.writeText(url);
-            alert('Download link copied to clipboard!');
-        } catch (err) {
-            console.error(err);
-            alert('Failed to copy link');
-        }
-    });
+        document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+            const url = document.getElementById('downloadLink').href;
+            try {
+                await navigator.clipboard.writeText(url);
+                alert('¡Enlace copiado al portapapeles!');
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo copiar el enlace');
+            }
+        });
 
-    // Copiar imagen QR
-    document.getElementById('copyQrBtn').addEventListener('click', async () => {
-        const dataUrl = document.getElementById('qrImg').src;
-        try {
-            const blob = await (await fetch(dataUrl)).blob();
-            const item = new ClipboardItem({ 'image/png': blob });
-            await navigator.clipboard.write([item]);
-            alert('QR image copied to clipboard!');
-        } catch (err) {
-            console.error(err);
-            alert('Failed to copy QR image (maybe not supported)');
-        }
-    });
+        document.getElementById('copyQrBtn').addEventListener('click', async () => {
+            const dataUrl = document.getElementById('qrImg').src;
+            try {
+                const blob = await (await fetch(dataUrl)).blob();
+                const item = new ClipboardItem({ 'image/png': blob });
+                await navigator.clipboard.write([item]);
+                alert('¡QR copiado al portapapeles!');
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo copiar el QR (puede que no sea compatible)');
+            }
+        });
     </script>
 </body>
 </html>

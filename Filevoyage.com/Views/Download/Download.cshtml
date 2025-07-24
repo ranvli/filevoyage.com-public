@@ -8,7 +8,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <title>FileVoyage</title>
@@ -16,23 +16,26 @@
     <link href="~/css/fv-hero.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="fv-hero">
+    <!-- Capa de espera decorativa -->
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true" aria-live="off"></div>
+
+    <main role="main" id="mainContent" class="fv-hero">
         <div class="fv-overlay"></div>
         <div class="fv-content">
             <div class="fv-card">
                 <h1>FileVoyage</h1>
-                <p class="fv-sub">@filename</p>
+                <p class="fv-sub" aria-label="Nombre de archivo">@filename</p>
 
                 @if (protectQR)
                 {
-                    <p>Escanea este QR para descargar:</p>
-                    <img src="@Url.Action("QrCode","Download",new { shortCode=code })"
-                         class="fv-qr" />
+                    <p>Escanea este código QR para descargar el archivo:</p>
+                    <img src="@Url.Action("QrCode","Download", new { shortCode = code })"
+                         class="fv-qr" alt="Código QR para descargar el archivo" />
                 }
                 else
                 {
-                    <p>La descarga comenzará en <span id="count">3</span> s. Si no, haz clic:</p>
-                    <a href="@streamUrl" class="fv-link">Descargar</a>
+                    <p>La descarga comenzará en <span id="countdown" aria-live="polite">3</span> segundos. Si no, haz clic:</p>
+                    <a href="@streamUrl" class="fv-link" role="button" aria-label="Descargar archivo">Descargar</a>
 
                     @if (remaining.HasValue)
                     {
@@ -40,23 +43,24 @@
                     }
 
                     <script>
-            let s = 3,
-                cnt = document.getElementById('count'),
-                iv = setInterval(() => {
-                  if (--s <= 0) {
-                    clearInterval(iv);
-                    location.href = '@streamUrl';
-                  } else {
-                    cnt.textContent = s;
-                  }
-                }, 1000);
+                        let s = 3,
+                            cnt = document.getElementById('countdown'),
+                            iv = setInterval(() => {
+                                if (--s <= 0) {
+                                    clearInterval(iv);
+                                    location.href = '@streamUrl';
+                                } else {
+                                    cnt.textContent = s;
+                                }
+                            }, 1000);
                     </script>
                 }
             </div>
         </div>
-    </div>
-    <footer class="fv-footer">
-        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacy</a></p>
+    </main>
+
+    <footer class="fv-footer" role="contentinfo">
+        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacidad</a></p>
     </footer>
 </body>
 </html>

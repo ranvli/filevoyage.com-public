@@ -88,5 +88,10 @@ namespace Filevoyage.com.Controllers
 
             return View("Success", vm);
         }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
     }
 }
