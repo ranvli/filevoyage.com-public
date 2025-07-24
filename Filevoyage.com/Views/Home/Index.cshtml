@@ -48,18 +48,26 @@
 
                         <!-- Selección de archivo -->
                         <div class="fv-field">
-                            <label for="FileInput" class="fv-file-label">
-                                <input asp-for="File"
-                                       id="FileInput"
-                                       type="file"
-                                       class="fv-file-input"
-                                       aria-label="Seleccionar archivo"
-                                       required />
-                                <span>Seleccionar archivo</span>
-                            </label>
+                            <label class="fv-file-label"
+                                   role="button"
+                                   tabindex="0"
+                                   aria-label="Seleccionar archivo"
+                                   for="FileInput"  
+    id="chooseFileLabel"
+  >
+    Seleccionar archivo
+  </label>
+                            <input asp-for="File"
+                                   id="FileInput"
+                                   type="file"
+                                   class="fv-file-input"
+                                   aria-labelledby="chooseFileLabel"
+                                   required
+                                   style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;" />
                             <span class="fv-filename" aria-live="polite">Ningún archivo seleccionado</span>
                             <span asp-validation-for="File" class="fv-error"></span>
                         </div>
+
 
                         <!-- Fecha de expiración -->
                         <div class="fv-field">
