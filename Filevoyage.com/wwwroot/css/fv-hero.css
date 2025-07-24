@@ -132,7 +132,7 @@
     padding: 8px 16px;
     font-size: 0.9rem;
     cursor: pointer;
-}
+}   
 
     /* Asegúrate de que el span junto al input pueda dibujar outline */
     .fv-file-label span {
@@ -219,25 +219,34 @@
 /* ========================================
    Footer minimalista
    ======================================== */
+/* Footer rediseñado */
 .fv-footer {
-    position: relative;
-    z-index: 2;
+    position: fixed; /* siempre visible */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #081A3E; /* mismo azul oscuro del overlay */
+    padding: 12px 0;
     text-align: center;
-    padding: 16px 0;
-    font-size: 0.85rem;
-    color: #FFFFFF;
-    background-color: transparent;
+    z-index: 2;
 }
 
+    .fv-footer p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #A0AEC0; /* gris suave */
+    }
+
     .fv-footer a {
-        color: #004AAD;
-        text-decoration: underline; /* subrayado por defecto */
-        margin: 0 4px;
+        color: #8BCFE0; /* azul claro */
+        text-decoration: underline;
+        margin-left: 4px;
     }
 
         .fv-footer a:hover {
-            text-decoration: underline;
+            color: #FFFFFF; /* blanco al pasar */
         }
+
 
 /* -------------------------------
    Success card tweaks
