@@ -134,6 +134,18 @@
     cursor: pointer;
 }
 
+    /* Asegúrate de que el span junto al input pueda dibujar outline */
+    .fv-file-label span {
+        display: inline-block;
+    }
+
+/* Cuando el input (invisible) tenga foco, dibuja el outline alrededor del texto */
+.fv-file-input:focus + span {
+    outline: 3px solid #FFD700;
+    outline-offset: 2px;
+}
+
+
 .fv-file-input {
     position: absolute;
     left: 0;

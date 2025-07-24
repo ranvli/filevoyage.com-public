@@ -20,70 +20,76 @@
     <link href="~/css/fv-hero.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
-    <!-- Overlay de espera -->
-    <div id="loadingOverlay" class="loading-overlay"></div>
+    <!-- Overlay de espera con aria-hidden para accesibilidad -->
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true" aria-live="off"></div>
 
-    <div class="fv-hero">
-        <div class="fv-overlay"></div>
-        <div class="fv-content">
+    <!-- Contenido principal marcado como main -->
+    <main id="mainContent" role="main">
+        <div class="fv-hero">
+            <div class="fv-overlay"></div>
+            <div class="fv-content">
 
-            <!-- Lock SVG -->
-            <div class="fv-lock">
-                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="56" y="112" width="144" height="104" rx="16" ry="16" fill="currentColor" />
-                    <path d="M80 112V80a48 48 0 0 1 96 0v32"
-                          stroke="currentColor" stroke-width="24" fill="none" />
-                </svg>
-            </div>
+                <!-- Lock SVG decorativo -->
+                <div class="fv-lock">
+                    <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <rect x="56" y="112" width="144" height="104" rx="16" ry="16" fill="currentColor" />
+                        <path d="M80 112V80a48 48 0 0 1 96 0v32" stroke="currentColor" stroke-width="24" fill="none" />
+                    </svg>
+                </div>
 
-            <!-- Card -->
-            <div class="fv-card">
-                <h1>FileVoyage</h1>
-                <p class="fv-sub">Transfer files securely</p>
+                <!-- Tarjeta de formulario -->
+                <div class="fv-card">
+                    <h1>FileVoyage</h1>
+                    <p class="fv-sub">Transfer files securely</p>
 
-                <form id="uploadForm" asp-action="Index" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="fv-error"></div>
+                    <form id="uploadForm" asp-action="Index" method="post" enctype="multipart/form-data">
+                        <!-- Resumen de validación accesible -->
+                        <div asp-validation-summary="ModelOnly" class="fv-error" role="alert" aria-live="assertive"></div>
 
-                    <!-- File input -->
-                    <div class="fv-field">
-                        <label for="FileInput" class="fv-file-label">
-                            <input asp-for="File"
-                                   id="FileInput"
-                                   type="file"
-                                   class="fv-file-input"
-                                   required />
-                            <span>Choose file</span>
-                        </label>
-                        <span class="fv-filename">No file chosen</span>
-                        <span asp-validation-for="File" class="fv-error"></span>
-                    </div>
+                        <!-- File input -->
+                        <div class="fv-field">
+                            <label for="FileInput" class="fv-file-label">
+                                <input asp-for="File"
+                                       id="FileInput"
+                                       type="file"
+                                       class="fv-file-input"
+                                       aria-label="Seleccionar archivo"
+                                       required />
+                                <span>Choose file</span>
+                            </label>
+                            <span class="fv-filename" aria-live="polite">No file chosen</span>
+                            <span asp-validation-for="File" class="fv-error"></span>
+                        </div>
 
-                    <!-- Expiration date -->
-                    <div class="fv-field">
-                        <label asp-for="ExpirationDate"></label>
-                        <input asp-for="ExpirationDate"
-                               type="date"
-                               class="fv-date"
-                               value="@(Model.ExpirationDate.HasValue
-                             ? Model.ExpirationDate.Value.ToString("yyyy-MM-dd")
-                             : "")" />
-                        <span asp-validation-for="ExpirationDate" class="fv-error"></span>
-                    </div>
+                        <!-- Expiration date -->
+                        <div class="fv-field">
+                            <label asp-for="ExpirationDate"></label>
+                            <input asp-for="ExpirationDate"
+                                   type="date"
+                                   class="fv-date"
+                                   aria-label="Fecha de expiración"
+                                   value="@(Model.ExpirationDate.HasValue
+                                 ? Model.ExpirationDate.Value.ToString("yyyy-MM-dd")
+                                 : "")" />
+                            <span asp-validation-for="ExpirationDate" class="fv-error"></span>
+                        </div>
 
-                    <!-- Submit -->
-                    <button id="submitBtn" type="submit" class="fv-btn">
-                        Start Upload
-                    </button>
-                </form>
+                        <!-- Submit -->
+                        <button id="submitBtn" type="submit" class="fv-btn">
+                            Start Upload
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <footer class="fv-footer">
+    <!-- Pie de página semántico con contentinfo -->
+    <footer class="fv-footer" role="contentinfo">
         <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacy</a></p>
     </footer>
 
-    <!-- jQuery + Validation -->
+    <!-- Scripts de jQuery + Validación -->
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
@@ -97,28 +103,23 @@
                 $date = $('.fv-date'),
                 $overlay = $('#loadingOverlay');
 
-            // Inicializa jQuery Validate (ya lo carga unobtrusive)
+            // Inicializa jQuery Validate
             $form.validate();
 
-            // Mostrar nombre de archivo
+            // Mostrar nombre de archivo al cambiar
             $fileInp.on('change', function () {
                 var f = this.files[0];
                 $fileLab.text(f ? f.name : 'No file chosen');
             });
 
-            // Solo si el form es válido, muestro overlay y bloqueo controles
-            $form.on('submit', function (e) {
-                if (!$(this).valid()) {
-                    // si no pasó validación, dejamos que jQuery muestre errores
-                    return;
-                }
-                // si es válido, entonces bloqueo y muestro overlay
+            // Mostrar overlay y desactivar controles al enviar si es válido
+            $form.on('submit', function () {
+                if (!$(this).valid()) return;
                 $overlay.show();
                 $btn.prop('disabled', true).text('⌛ Uploading…');
                 $date.prop('disabled', true);
             });
         });
     </script>
-
 </body>
 </html>
