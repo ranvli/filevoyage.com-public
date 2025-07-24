@@ -338,3 +338,38 @@
         outline: 3px solid #FFD700;
         outline-offset: 2px;
     }
+
+.fv-header {
+    background-color: #ffffffdd;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+.fv-navbar {
+    background-color: #0d1730;
+    padding: 1rem;
+}
+
+.fv-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 2rem;
+}
+
+.fv-nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+    .fv-nav-link:hover,
+    .fv-nav-link:focus {
+        color: #ffd700; /* Amarillo dorado para foco o hover */
+        outline: 2px solid #ffd700;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }

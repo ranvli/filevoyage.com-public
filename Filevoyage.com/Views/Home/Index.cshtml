@@ -4,100 +4,73 @@
 
 @{
     ViewData["Title"] = "FileVoyage";
-    Layout = null;
-    // Para cargar la fecha con hoy +3 días:
-    // Model.ExpirationDate ??= DateTime.UtcNow.AddDays(3);
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"]</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Fuentes de Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
-    <!-- Estilos CSS -->
-    <link href="~/css/fv-hero.css" rel="stylesheet" asp-append-version="true" />
-</head>
-<body>
-    <!-- Capa de espera con ARIA -->
-    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true" aria-live="off"></div>
 
-    <!-- Contenido principal -->
-    <main id="mainContent" role="main">
-        <div class="fv-hero">
-            <div class="fv-overlay"></div>
-            <div class="fv-content">
+<!-- Capa de espera con ARIA -->
+<div id="loadingOverlay" class="loading-overlay" aria-hidden="true" aria-live="off"></div>
 
-                <!-- Ícono de candado decorativo -->
-                <div class="fv-lock">
-                    <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                        <rect x="56" y="112" width="144" height="104" rx="16" ry="16" fill="currentColor" />
-                        <path d="M80 112V80a48 48 0 0 1 96 0v32" stroke="currentColor" stroke-width="24" fill="none" />
-                    </svg>
-                </div>
+<main id="mainContent" role="main">
+    <div class="fv-hero">
+        <div class="fv-overlay"></div>
+        <div class="fv-content">
 
-                <!-- Tarjeta de formulario -->
-                <div class="fv-card">
-                    <h1>FileVoyage</h1>
-                    <p class="fv-sub">Transferir archivos de forma segura</p>
+            <div class="fv-lock" aria-hidden="true">
+                <!-- SVG decorativo -->
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                    <rect x="56" y="112" width="144" height="104" rx="16" ry="16" fill="currentColor" />
+                    <path d="M80 112V80a48 48 0 0 1 96 0v32" stroke="currentColor" stroke-width="24" fill="none" />
+                </svg>
+            </div>
 
-                    <form id="uploadForm" asp-action="Index" method="post" enctype="multipart/form-data">
-                        <!-- Resumen de validación accesible -->
-                        <div asp-validation-summary="ModelOnly" class="fv-error" role="alert" aria-live="assertive"></div>
+            <div class="fv-card">
+                <h1>FileVoyage</h1>
+                <p class="fv-sub">Transferir archivos de forma segura</p>
 
-                        <!-- Selección de archivo -->
-                        <div class="fv-field">
-                            <label class="fv-file-label"
-                                   role="button"
-                                   tabindex="0"
-                                   aria-label="Seleccionar archivo"
-                                   for="FileInput"  
-    id="chooseFileLabel"
-  >
-    Seleccionar archivo
-  </label>
-                            <input asp-for="File"
-                                   id="FileInput"
-                                   type="file"
-                                   class="fv-file-input"
-                                   aria-labelledby="chooseFileLabel"
-                                   required
-                                   style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;" />
-                            <span class="fv-filename" aria-live="polite">Ningún archivo seleccionado</span>
-                            <span asp-validation-for="File" class="fv-error"></span>
-                        </div>
+                <form id="uploadForm" asp-action="Index" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="fv-error" role="alert" aria-live="assertive"></div>
 
+                    <!-- Selección de archivo -->
+                    <div class="fv-field">
+                        <label class="fv-file-label"
+                               role="button"
+                               tabindex="0"
+                               aria-label="Seleccionar archivo"
+                               for="FileInput"
+                               id="chooseFileLabel">
+                            Seleccionar archivo
+                        </label>
+                        <input asp-for="File"
+                               id="FileInput"
+                               type="file"
+                               class="fv-file-input"
+                               aria-labelledby="chooseFileLabel"
+                               required
+                               style="position:absolute; width:1px; height:1px; opacity:0;" />
+                        <span class="fv-filename" aria-live="polite">Ningún archivo seleccionado</span>
+                        <span asp-validation-for="File" class="fv-error"></span>
+                    </div>
 
-                        <!-- Fecha de expiración -->
-                        <div class="fv-field">
-                            <label asp-for="ExpirationDate">Fecha de expiración</label>
-                            <input asp-for="ExpirationDate"
-                                   type="date"
-                                   class="fv-date"
-                                   aria-label="Fecha de expiración"
-                                   value="@(Model.ExpirationDate.HasValue
-                                 ? Model.ExpirationDate.Value.ToString("yyyy-MM-dd")
-                                 : "")" />
-                            <span asp-validation-for="ExpirationDate" class="fv-error"></span>
-                        </div>
+                    <!-- Fecha de expiración -->
+                    <div class="fv-field">
+                        <label asp-for="ExpirationDate">Fecha de expiración</label>
+                        <input asp-for="ExpirationDate"
+                               type="date"
+                               class="fv-date"
+                               aria-label="Fecha de expiración"
+                               value="@(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToString("yyyy-MM-dd") : "")" />
+                        <span asp-validation-for="ExpirationDate" class="fv-error"></span>
+                    </div>
 
-                        <!-- Botón de envío -->
-                        <button id="submitBtn" type="submit" class="fv-btn">
-                            Iniciar carga
-                        </button>
-                    </form>
-                </div>
+                    <!-- Botón de envío -->
+                    <button id="submitBtn" type="submit" class="fv-btn">Iniciar carga</button>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <!-- Pie de página semántico -->
-    <footer class="fv-footer" role="contentinfo">
-        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacidad</a></p>
-    </footer>
-
-    <!-- Scripts de jQuery y validación -->
+@section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
@@ -111,16 +84,13 @@
                 $date = $('.fv-date'),
                 $overlay = $('#loadingOverlay');
 
-            // Inicializar validación
             $form.validate();
 
-            // Actualizar texto de archivo seleccionado
             $fileInp.on('change', function () {
                 var f = this.files[0];
                 $fileLab.text(f ? f.name : 'Ningún archivo seleccionado');
             });
 
-            // Mostrar overlay y desactivar controles al enviar
             $form.on('submit', function () {
                 if (!$(this).valid()) return;
                 $overlay.show();
@@ -129,5 +99,4 @@
             });
         });
     </script>
-</body>
-</html>
+}

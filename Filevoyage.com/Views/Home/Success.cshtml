@@ -1,18 +1,11 @@
 ﻿@model Filevoyage.com.Models.UploadSuccessModel
 @{
     ViewData["Title"] = "Carga exitosa";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] – FileVoyage</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+@section Styles {
     <link rel="stylesheet" href="~/css/fv-hero.css" />
-
     <style>
         .fv-link-container {
             display: flex;
@@ -35,36 +28,33 @@
                 transform: scale(0.98);
             }
     </style>
-</head>
-<body>
-    <div class="fv-hero">
-        <div class="fv-overlay" aria-hidden="true" aria-live="off"></div>
-        <main class="fv-content" id="mainContent" role="main">
-            <div class="fv-card">
-                <h1 class="fv-success-emoji" aria-label="Carga exitosa">🎉 ¡Archivo cargado!</h1>
-                <p class="fv-sub">Tu archivo está listo</p>
+}
 
-                <p><strong>Enlace de descarga:</strong></p>
-                <div class="fv-link-container">
-                    <a id="downloadLink" href="@Model.DownloadUrl" target="_blank" class="fv-link">
-                        @Model.DownloadUrl
-                    </a>
-                    <button id="copyLinkBtn" class="fv-copy-btn" aria-label="Copiar enlace de descarga al portapapeles">Copiar enlace</button>
-                </div>
+<div class="fv-hero">
+    <div class="fv-overlay" aria-hidden="true" aria-live="off"></div>
+    <main class="fv-content" id="mainContent" role="main">
+        <div class="fv-card">
+            <h1 class="fv-success-emoji" aria-label="Carga exitosa">🎉 ¡Archivo cargado!</h1>
+            <p class="fv-sub">Tu archivo está listo</p>
 
-                <p class="fv-qr-text">Comparte ese enlace o escanea el siguiente código QR:</p>
-                <div class="fv-qr-container">
-                    <img id="qrImg" src="@Model.QrImageDataUrl" alt="Código QR que enlaza al archivo cargado" class="fv-qr" />
-                    <button id="copyQrBtn" class="fv-copy-btn" aria-label="Copiar imagen del código QR">Copiar QR</button>
-                </div>
+            <p><strong>Enlace de descarga:</strong></p>
+            <div class="fv-link-container">
+                <a id="downloadLink" href="@Model.DownloadUrl" target="_blank" class="fv-link">
+                    @Model.DownloadUrl
+                </a>
+                <button id="copyLinkBtn" class="fv-copy-btn" aria-label="Copiar enlace de descarga al portapapeles">Copiar enlace</button>
             </div>
-        </main>
-    </div>
 
-    <footer class="fv-footer" role="contentinfo">
-        <p>© 2025 – Filevoyage.com&nbsp;·&nbsp;<a href="/Privacy">Privacidad</a></p>
-    </footer>
+            <p class="fv-qr-text">Comparte ese enlace o escanea el siguiente código QR:</p>
+            <div class="fv-qr-container">
+                <img id="qrImg" src="@Model.QrImageDataUrl" alt="Código QR que enlaza al archivo cargado" class="fv-qr" />
+                <button id="copyQrBtn" class="fv-copy-btn" aria-label="Copiar imagen del código QR">Copiar QR</button>
+            </div>
+        </div>
+    </main>
+</div>
 
+@section Scripts {
     <script>
         document.getElementById('copyLinkBtn').addEventListener('click', async () => {
             const url = document.getElementById('downloadLink').href;
@@ -90,5 +80,4 @@
             }
         });
     </script>
-</body>
-</html>
+}
