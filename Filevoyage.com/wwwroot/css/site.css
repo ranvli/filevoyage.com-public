@@ -9,7 +9,7 @@
 body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #0A1A3A;
-    color: #fff;
+    color: #ffffff;
 }
 
 .app-content {
@@ -35,7 +35,8 @@ body {
     /* Títulos */
     .container-card h1 {
         font-size: 2rem;
-        color: #0073E6;
+        font-weight: 600; /* más peso para legibilidad */
+        color: #0073E6; /* azul original */
         margin-bottom: 0.25rem;
         text-align: center;
     }
@@ -47,11 +48,12 @@ body {
         text-align: center;
     }
 
-    /* Inputs */
+    /* Labels e Inputs */
     .container-card label {
         display: block;
         margin-bottom: 0.25rem;
         font-weight: 600;
+        color: #0A1A3A;
     }
 
     .container-card input[type="file"],
@@ -61,8 +63,8 @@ body {
         padding: 0.75rem;
         border: 1px solid #BAC2CC;
         border-radius: 6px;
-        background: #FFF;
-        color: #000;
+        background-color: #FFFFFF;
+        color: #000000;
         margin-bottom: 1rem;
     }
 
@@ -82,13 +84,14 @@ body {
     width: 100%;
     padding: 0.75rem;
     background-color: #0073E6;
-    color: #FFF;
+    color: #FFFFFF;
     font-size: 1rem;
     font-weight: 600;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s;
 }
 
     .container-card button:hover {
@@ -110,6 +113,23 @@ body {
 }
 
     .footer-inner a {
-        color: #FFF;
+        color: #FFFFFF;
         text-decoration: underline;
     }
+
+        .footer-inner a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========================================
+   Indicadores de foco para teclado
+   ======================================== */
+        .container-card button:focus,
+        .container-card input[type="file"]:focus,
+        .container-card input[type="date"]:focus,
+        .container-card select:focus,
+        .checkbox-group input:focus,
+        .footer-inner a:focus {
+            outline: 3px solid #FFD700; /* alto contraste dorado */
+            outline-offset: 2px;
+        }

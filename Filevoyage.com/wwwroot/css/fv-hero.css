@@ -18,9 +18,9 @@
     width: 100%;
     height: 100%;
     background-color: #081A3E; /* azul muy oscuro */
-      background-image: url('/images/hero-bg.jpg');
-      background-size: cover;
-      background-position: center;
+    background-image: url('/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
     z-index: 1;
 }
 
@@ -32,10 +32,9 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* semitransparente */
-    display: none;
-    z-index: 9999; /* por encima de todo */
-    cursor: wait; /* puntero tipo reloj de arena */
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    cursor: wait;
 }
 
     .loading-overlay::after {
@@ -58,7 +57,6 @@
     }
 }
 
-
 /* contenedor flex centrado */
 .fv-content {
     position: relative;
@@ -76,11 +74,11 @@
 .fv-lock {
     flex: 1;
     max-width: 300px;
-    color: #8BCFE0; /* azul claro */
-    display: none; /* ocultar en móviles */
+    color: #8BCFE0; /* mantiene tu azul claro */
+    display: none;
 }
 
-@media(min-width: 768px) {
+@media (min-width: 768px) {
     .fv-lock {
         display: block;
     }
@@ -126,7 +124,6 @@
     position: relative;
 }
 
-/* Input file personalizado */
 .fv-file-label {
     display: inline-block;
     background-color: #FFFFFF;
@@ -151,13 +148,12 @@
     display: block;
     margin-top: 6px;
     font-size: 0.85rem;
-    color: #6B7280;
+    color: #4B5563;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-/* Input date */
 .fv-date {
     width: 100%;
     padding: 10px 12px;
@@ -168,7 +164,6 @@
     color: #111827;
 }
 
-/* Checkbox (si quieres ocultarlo, añade display:none) */
 .fv-check {
     display: flex;
     align-items: center;
@@ -181,7 +176,7 @@
 
 /* Mensajes de validación */
 .fv-error {
-    color: #DC2626;
+    color: #B91C1C; /* rojo oscuro para contraste ≥ 4.5:1 */
     font-size: 0.8rem;
     margin-top: 4px;
     display: block;
@@ -196,7 +191,7 @@
     padding: 14px 0;
     margin-top: 4px;
     background-color: #004AAD;
-    color: white;
+    color: #FFFFFF;
     border: none;
     border-radius: 24px;
     font-size: 1rem;
@@ -223,15 +218,14 @@
 }
 
     .fv-footer a {
-        color: #8BCFE0;
-        text-decoration: none;
+        color: #004AAD;
+        text-decoration: underline; /* subrayado por defecto */
         margin: 0 4px;
     }
 
-    .fv-footer a:hover {
-        text-decoration: underline;
-    }
-
+        .fv-footer a:hover {
+            text-decoration: underline;
+        }
 
 /* -------------------------------
    Success card tweaks
@@ -239,7 +233,7 @@
 .fv-success-emoji {
     font-size: 2.5rem;
     margin: 0;
-    color: #0073e6;
+    color: #0073E6;
 }
 
 .fv-card p {
@@ -248,12 +242,18 @@
     font-weight: 300;
 }
 
+/* Enlaces en la tarjeta de éxito */
 .fv-link {
-    color: #0073e6;
+    color: #005BB5; /* azul más oscuro para contraste ≥ 4.5:1 */
     word-break: break-all;
     text-decoration: underline;
 }
 
+    .fv-link:hover {
+        color: #004494; /* un poco más intenso al pasar */
+    }
+
+/* QR y contenedores */
 .fv-qr-text {
     margin-top: 1rem;
     font-size: 0.9rem;
@@ -271,7 +271,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-/* Contenedores en columna, con espacio entre items */
 .fv-link-container,
 .fv-qr-container {
     display: flex;
@@ -281,16 +280,15 @@
     margin: 1rem 0;
 }
 
-/* Centrar QR y botón debajo */
 .fv-qr-container {
     align-items: center;
 }
 
 /* Botones de copia */
 .fv-copy-btn {
-    background: #0073e6;
+    background: #0073E6;
     border: none;
-    color: white;
+    color: #FFFFFF;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
@@ -300,16 +298,22 @@
 }
 
     .fv-copy-btn:hover {
-        background: #005bb5;
+        background: #005BB5;
     }
 
     .fv-copy-btn:active {
         transform: scale(0.98);
     }
 
-/* Si quieres que el link sea más legible y no muy largo */
-.fv-link {
-    word-break: break-all;
-    color: #0073e6;
-    text-decoration: underline;
-}
+    /* ========================================
+   Indicadores de foco para teclado
+   ======================================== */
+    .fv-btn:focus,
+    .fv-file-label:focus,
+    .fv-date:focus,
+    .fv-copy-btn:focus,
+    .fv-link:focus,
+    .fv-footer a:focus {
+        outline: 3px solid #FFD700;
+        outline-offset: 2px;
+    }
