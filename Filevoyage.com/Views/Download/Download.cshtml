@@ -34,7 +34,7 @@
                 }
                 else
                 {
-                    <p>La descarga comenzará en <span id="countdown" aria-live="polite">3</span> segundos. Si no, haz clic:</p>
+                    <p>La descarga comenzará en <span id="countdown" data-target="@streamUrl" aria-live="polite">3</span> segundos. Si no, haz clic:</p>
                     <a href="@streamUrl" class="fv-link" role="button" aria-label="Descargar archivo">Descargar</a>
 
                     @if (remaining.HasValue)
@@ -58,9 +58,9 @@
             </div>
         </div>
     </main>
-
-    <footer class="fv-footer" role="contentinfo">
-        <p>© 2025 – Filevoyage.com · <a href="/Privacy">Privacidad</a></p>
-    </footer>
 </body>
 </html>
+
+@section Scripts {
+    <script src="~/js/download.js" asp-append-version="true"></script>
+}

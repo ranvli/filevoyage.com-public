@@ -40,13 +40,14 @@
                                id="chooseFileLabel">
                             Seleccionar archivo
                         </label>
+
                         <input asp-for="File"
                                id="FileInput"
                                type="file"
                                class="fv-file-input"
                                aria-labelledby="chooseFileLabel"
-                               required
-                               style="position:absolute; width:1px; height:1px; opacity:0;" />
+                               required />
+
                         <span class="fv-filename" aria-live="polite">Ningún archivo seleccionado</span>
                         <span asp-validation-for="File" class="fv-error"></span>
                     </div>
@@ -74,29 +75,5 @@
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
-
-    <script>
-        $(function () {
-            var $form = $('#uploadForm'),
-                $fileInp = $('#FileInput'),
-                $fileLab = $('.fv-filename'),
-                $btn = $('#submitBtn'),
-                $date = $('.fv-date'),
-                $overlay = $('#loadingOverlay');
-
-            $form.validate();
-
-            $fileInp.on('change', function () {
-                var f = this.files[0];
-                $fileLab.text(f ? f.name : 'Ningún archivo seleccionado');
-            });
-
-            $form.on('submit', function () {
-                if (!$(this).valid()) return;
-                $overlay.show();
-                $btn.prop('disabled', true).text('⌛ Cargando...');
-                $date.prop('disabled', true);
-            });
-        });
-    </script>
+    <script src="~/js/upload.js" asp-append-version="true"></script>
 }
