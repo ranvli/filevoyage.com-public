@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 
 // CosmosClient
 builder.Services.AddSingleton(sp => {
-    var connStr = builder.Configuration["CosmosDb__ConnectionString"];
+    var connStr = builder.Configuration["CosmosDb:ConnectionString"];
     return new CosmosClient(connStr);
 });
 

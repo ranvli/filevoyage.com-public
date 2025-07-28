@@ -11,8 +11,8 @@ namespace Filevoyage.com.Services
 
         public AzureStorageService(IConfiguration configuration)
         {
-            var connectionString = configuration["AzureStorage__ConnectionString"]!;
-            var containerName = configuration["AzureStorage__ContainerName"]!;
+            var connectionString = configuration["AzureStorage:ConnectionString"]!;
+            var containerName = configuration["AzureStorage:ContainerName"]!;
 
             var svc = new BlobServiceClient(connectionString);
             _containerClient = svc.GetBlobContainerClient(containerName);
