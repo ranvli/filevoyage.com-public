@@ -17,9 +17,17 @@
             <div class="fv-card">
                 <h1>FileVoyage</h1>
                 <p class="fv-sub">Oops…</p>
-                <p>Lo sentimos, este enlace ya no está disponible.</p>
+                @if (ViewBag.ErrorReason != null)
+                {
+                    <p>@ViewBag.ErrorReason</p>
+                }
+                else
+                {
+                    <p>Lo sentimos, este enlace ya no está disponible.</p>
+                }
                 <a href="~/" class="fv-link" role="button" aria-label="Volver al inicio">Volver al inicio</a>
             </div>
+
         </main>
     </div>
 

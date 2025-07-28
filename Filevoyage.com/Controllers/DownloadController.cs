@@ -27,37 +27,45 @@ namespace Filevoyage.com.Controllers
         public async Task<IActionResult> DownloadPage(string shortCode)
         {
             if (string.IsNullOrWhiteSpace(shortCode))
-                return NotFound();
+            {
+                ViewBag.ErrorReason = "Código inválido o inexistente.";
+                return View("DownloadExpired");
+            }
 
-            // Lee metadata con un solo método
             var meta = await _cosmos.GetItemByIdAsync(shortCode);
             if (meta == null)
-                return NotFound();
-
-            // Expirado?
-            if (meta.ExpirationDate < DateTime.UtcNow)
+            {
+                ViewBag.ErrorReason = "Código inválido o inexistente.";
                 return View("DownloadExpired");
+            }
 
-            // Descargas restantes (si MaxDownloads>0)
+            if (meta.ExpirationDate < DateTime.UtcNow)
+            {
+                ViewBag.ErrorReason = $"El archivo expiró el {meta.ExpirationDate:dd/MM/yyyy HH:mm} UTC.";
+                return View("DownloadExpired");
+            }
+
             int? remaining = meta.MaxDownloads > 0
                 ? meta.MaxDownloads - meta.DownloadCount
                 : (int?)null;
 
             if (remaining.HasValue && remaining.Value <= 0)
+            {
+                ViewBag.ErrorReason = "Se alcanzó el número máximo de descargas.";
                 return View("DownloadExpired");
+            }
 
-            // Pasa datos a la vista
             ViewBag.ShortCode = shortCode;
             ViewBag.Filename = meta.Filename;
             ViewBag.ProtectWithQR = meta.ProtectWithQR;
             ViewBag.Remaining = remaining;
 
-            // Construye la URL “stream”: https://host/ABC123/stream
             var host = $"{Request.Scheme}://{Request.Host}";
             ViewBag.StreamUrl = $"{host}/{shortCode}/stream";
 
             return View("Download");
         }
+
 
         // 2) Endpoint para generar el QR: /ABC123/qr
         [HttpGet("{shortCode}/qr")]
