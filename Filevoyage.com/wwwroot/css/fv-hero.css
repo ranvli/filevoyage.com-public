@@ -373,3 +373,59 @@
         outline-offset: 2px;
         border-radius: 4px;
     }
+
+/* ================================
+   Variante ancha para el card
+   ================================ */
+.fv-card--wide {
+    flex: none !important;
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+/* Panel a pantalla completa, fondo blanco, texto oscuro */
+.fv-privacy {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: clamp(16px,4vw,56px);
+    background: #FFFFFF;
+    color: #111827;
+    /* ⇩ nuevo: igual que las cards */
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+    /* Tipografía y jerarquía */
+    .fv-privacy h1 {
+        margin: 0 0 .5rem 0;
+        font-size: clamp(28px, 3vw, 40px);
+        font-weight: 600;
+        color: #004AAD;
+    }
+
+.fv-privacy-updated {
+    margin: 0 0 1.5rem 0;
+    color: #374151;
+    font-size: clamp(14px, .95vw, 16px);
+}
+
+.fv-privacy h2 {
+    margin: 2rem 0 .5rem;
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.fv-privacy a {
+    color: #005BB5;
+    text-decoration: underline;
+}
+
+    .fv-privacy a:hover,
+    .fv-privacy a:focus {
+        color: #004494;
+        outline: 3px solid #FFD700;
+        outline-offset: 2px;
+    }
