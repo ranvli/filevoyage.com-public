@@ -11,18 +11,14 @@ namespace Filevoyage.com.Services
 
         public AzureStorageService(IConfiguration configuration)
         {
-            var accountName = configuration["AzureStorage:AccountName"]!;
-            var accountKey = configuration["AzureStorage:AccountKey"]!;
-            var containerName = configuration["AzureStorage:ContainerName"]!;
+            var connectionString = configuration["AzureStorage__ConnectionString"]!;
+            var containerName = configuration["AzureStorage__ContainerName"]!;
 
-            var creds = new StorageSharedKeyCredential(accountName, accountKey);
-            var uri = new Uri($"https://{accountName}.blob.core.windows.net");
-            var svc = new BlobServiceClient(uri, creds);
-
+            var svc = new BlobServiceClient(connectionString);
             _containerClient = svc.GetBlobContainerClient(containerName);
-            // Aseguramos existencia sin habilitar acceso público
             _containerClient.CreateIfNotExists(PublicAccessType.None);
         }
+
 
         public async Task UploadFileAsync(string fileName, Stream stream)
             => await _containerClient
