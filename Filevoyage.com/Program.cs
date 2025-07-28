@@ -33,23 +33,23 @@ builder.Services.AddSingleton<AzureStorageService>();
 
 var app = builder.Build();
 
-// --------- Proxy headers (Azure) ----------
+// Proxy headers para Azure App Service
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-    KnownNetworks = { },   // limpiar para aceptar encabezados del proxy de App Service
+    KnownNetworks = { },
     KnownProxies = { }
 });
 
-// --------- Seguridad: encabezados ---------
+// Seguridad con encabezados HTTP
 app.Use(async (context, next) =>
 {
     const string csp =
         "default-src 'self'; " +
-        "script-src 'self'; " +                                  // sin inline
-        "style-src 'self' https://fonts.googleapis.com; " +      // Google Fonts CSS
-        "img-src 'self' data:; " +                               // permitir data: para QR 
-        "font-src 'self' https://fonts.gstatic.com; " +          // fuentes de Google
+        "script-src 'self'; " +
+        "style-src 'self' https://fonts.googleapis.com; " +
+        "img-src 'self' data:; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
         "connect-src 'self'; " +
         "frame-ancestors 'none'; " +
         "base-uri 'self'; " +
@@ -57,11 +57,9 @@ app.Use(async (context, next) =>
 
     context.Response.Headers["Content-Security-Policy"] = csp;
     context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-    context.Response.Headers["X-Frame-Options"] = "DENY"; // redundante con frame-ancestors, OK
+    context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-    context.Response.Headers["Permissions-Policy"] =
-        "geolocation=(), microphone=(), camera=(), payment=(), usb=()";
-    // Opcionales endurecidos:
+    context.Response.Headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=(), payment=(), usb=()";
     context.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin";
     context.Response.Headers["Cross-Origin-Resource-Policy"] = "same-origin";
 
@@ -72,7 +70,7 @@ app.Use(async (context, next) =>
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts(); // enviará Strict-Transport-Security
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -81,17 +79,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
-// Attribute routing
 app.MapControllers();
 
-// Ruta corta: https://miapp/{shortCode}
 app.MapControllerRoute(
     name: "shortlink",
     pattern: "{shortCode}",
     defaults: new { controller = "Download", action = "DownloadPage" }
 );
 
-// MVC convencional
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
