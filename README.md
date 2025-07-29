@@ -43,12 +43,11 @@ Upload Page	Download Page
 
 🚀 How to Run Locally
 1️⃣ Clone the repository
-
 git clone https://github.com/yourusername/FileVoyage.git
 cd FileVoyage
+
 2️⃣ Configure settings
 Create an appsettings.json file with your Azure configuration:
-
 
 {
   "AzureStorage": {
@@ -62,10 +61,9 @@ Create an appsettings.json file with your Azure configuration:
   }
 }
 
+
 3️⃣ Run the application
-bash
-Copy
-Edit
+
 dotnet run
 Access at https://localhost:7198.
 
