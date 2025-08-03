@@ -5,8 +5,11 @@ It allows users to **upload files, generate temporary download links, and obtain
 
 Autor:
 Lic. Randall Vargas Li
+
 Bsc Ing. Systems engineering
+
 Lic. Ing. Software engineering w/software development emphasis
+
 Pend Msc. Ing. Software engineering w/AI emphasis
 
 Profesores:
