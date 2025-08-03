@@ -3,6 +3,17 @@
 **FileVoyage** is a web application initially developed as part of the **Software Design (PSWE-04)** course at Cenfotec University’s Master's in Software Engineering.  
 It allows users to **upload files, generate temporary download links, and obtain a QR code for easy sharing**.
 
+Autor:
+Lic. Randall Vargas Li
+Bsc Ing. Systems engineering
+Lic. Ing. Software engineering w/software development emphasis
+Pend Msc. Ing. Software engineering w/AI emphasis
+
+Profesores:
+Msc. Kevin Hernández Rostrán
+Msc. Mario Roberto Chacón Rivas
+
+
 ---
 
 ## ✨ Features
