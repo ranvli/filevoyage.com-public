@@ -13,8 +13,7 @@ Lic. Ing. Software engineering w/software development emphasis
 Pend Msc. Ing. Software engineering w/AI emphasis
 
 Profesores:
-Msc. Kevin Hernández Rostrán
-Msc. Mario Roberto Chacón Rivas
+Msc. Kevin Hernández Rostrán & Msc. Mario Roberto Chacón Rivas
 
 
 ---
