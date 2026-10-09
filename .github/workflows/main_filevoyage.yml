@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && '["ubuntu-latest"]' || '["self-hosted","Linux","X64","acer-linux"]') }}
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -27,16 +27,16 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{ github.workspace }}/publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{ github.workspace }}/publish
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && '["ubuntu-latest"]' || '["self-hosted","Linux","X64","acer-linux"]') }}
     needs: build
     permissions:
       id-token: write #This is required for requesting the JWT

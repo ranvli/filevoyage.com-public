@@ -11,7 +11,7 @@ env:
   WORKING_DIRECTORY: Filevoyage.com
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && '["ubuntu-latest"]' || '["self-hosted","Linux","X64","acer-linux"]') }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET SDK
@@ -32,7 +32,7 @@ jobs:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && '["ubuntu-latest"]' || '["self-hosted","Linux","X64","acer-linux"]') }}
     needs: build
     steps:
     - name: Download artifact from build job
